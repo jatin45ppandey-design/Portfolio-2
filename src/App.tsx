@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Briefcase, Check, ChevronDown, ChevronLeft, ChevronRight, Clapperboard, Code2, Download, ExternalLink, FileText, Github, Linkedin, Mail, Menu, Pause, Play, SkipForward, Sparkles, VolumeX, X } from 'lucide-react';
 import { profile, projects, journey, skillGroups, modes, introScenes, type Project, type ViewMode, type SectionId } from './data/portfolio';
 
@@ -117,7 +117,7 @@ function App() {
   const [selected,setSelected]=useState<Project|null>(null);const [reel,setReel]=useState(false);const [resume,setResume]=useState(false);
   useEffect(()=>{if(stage==='home')return;const prev=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{document.body.style.overflow=prev;};},[stage]);
   const choose=(id:ViewMode)=>{setMode(id);try{sessionStorage.setItem('jatin-series-mode',id);}catch{}setStage('home');window.scrollTo(0,0);};
-  const navigate=(id:SectionId)=>{document.getElementById(id)?.scrollIntoView({behavior:reduced?'instant':'smooth'});};
+  const navigate=(id:SectionId)=>{document.getElementById(id)?.scrollIntoView({behavior:reduced?'auto':'smooth'});};
   const replay=()=>{setStage('opening');window.scrollTo(0,0);};
   const sections:Record<SectionId,ReactNode>={about:<About/>,journey:<Journey/>,originals:<Originals onSelect={setSelected}/>,skills:<Skills openProject={setSelected}/>,highlights:<Highlights openProject={setSelected}/>,dossier:<Dossier onView={()=>setResume(true)}/>};
   const order=modes.find(m=>m.id===mode)?.order||modes[0].order;
