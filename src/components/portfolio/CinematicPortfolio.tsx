@@ -75,21 +75,57 @@ function Intro({document,onDone}:{document:PortfolioDocument;onDone:()=>void}) {
   </motion.div>;
 }
 
-function Navigation({mode,setMode,replay}:{mode:Mode;setMode:(m:Mode)=>void;replay:()=>void}) {
-  const [open,setOpen]=useState(false);const [scrolled,setScrolled]=useState(false);
-  useEffect(()=>{const listener=()=>setScrolled(window.scrollY>60);listener();window.addEventListener("scroll",listener,{passive:true});return()=>window.removeEventListener("scroll",listener);},[]);
+function ProgressIndicator() {
+  const {scrollYProgress}=useScroll();
+  return <motion.div className="c-page-progress" aria-hidden="true" style={{scaleX:scrollYProgress}}/>;
+}
+function Navigation({replay}:{replay:()=>void}) {
+  const [open,setOpen]=useState(false);
+  const [scrolled,setScrolled]=useState(false);
+  const [active,setActive]=useState("home");
+  useEffect(()=>{
+    const listener=()=>setScrolled(window.scrollY>55);
+    listener();window.addEventListener("scroll",listener,{passive:true});
+    return()=>window.removeEventListener("scroll",listener);
+  },[]);
+  useEffect(()=>{
+    const ids=["home","about","projects","skills","education","leadership","certifications","achievements","contact"];
+    const observer=new IntersectionObserver(entries=>{
+      const current=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+      if(current)setActive(current.target.id);
+    },{rootMargin:"-18% 0px -57% 0px",threshold:[0,.1,.3]});
+    ids.forEach(id=>{const el=document.getElementById(id);if(el)observer.observe(el);});
+    return()=>observer.disconnect();
+  },[]);
   const nav=[["about","About"],["projects","Projects"],["skills","Skills"],["education","Education"],["leadership","Leadership"],["certifications","Certifications"],["achievements","Achievements"],["contact","Contact"]] as const;
-  return <header className={"c-nav "+(scrolled?"c-nav-solid":"")}><a className="c-nav-logo" href="#home" aria-label="Go to homepage">JP<span>.</span><small>PORTFOLIO</small></a><nav className={"c-nav-links "+(open?"c-nav-open":"")} aria-label="Main navigation">{nav.map(([id,title])=><a key={id} href={"#"+id} onClick={()=>setOpen(false)}>{title}</a>)}<button className="c-replay" onClick={()=>{setOpen(false);replay();}}>REPLAY INTRO</button></nav><div className="c-nav-right"><label htmlFor="c-view-mode">VIEW</label><select id="c-view-mode" value={mode} onChange={e=>setMode(e.target.value as Mode)}>{views.map(v=><option key={v.id} value={v.id}>{v.title}</option>)}</select><button className="c-menu" onClick={()=>setOpen(!open)} aria-label={open?"Close menu":"Open menu"} aria-expanded={open}>{open?<X size={22}/>:<Menu size={22}/>}</button></div></header>;
+  return <header className={"c-nav "+(scrolled?"c-nav-solid":"")}>
+    <a className="c-nav-logo" href="#home" aria-label="Go to homepage">JP<span>.</span><small>JATIN PANDEY</small></a>
+    <nav className={"c-nav-links "+(open?"c-nav-open":"")} aria-label="Main navigation">
+      {nav.map(([id,title])=><a key={id} href={"#"+id} aria-current={active===id?"location":undefined} onClick={()=>setOpen(false)}>{title}</a>)}
+      <button className="c-replay" onClick={()=>{setOpen(false);replay();}}>REPLAY INTRO <ArrowUpRight size={13}/></button>
+    </nav>
+    <button className="c-menu" onClick={()=>setOpen(!open)} aria-label={open?"Close menu":"Open menu"} aria-expanded={open}>{open?<X size={21}/>:<Menu size={21}/>}</button>
+  </header>;
 }
 function Hero({doc,replay}:{doc:PortfolioDocument;replay:()=>void}) {
   const ref=useRef<HTMLElement>(null);
   const {scrollYProgress}=useScroll({target:ref,offset:["start start","end start"]});
-  const y=useTransform(scrollYProgress,[0,1],[0,110]);
-  const opacity=useTransform(scrollYProgress,[0,.88],[1,0]);
-  return <section id="home" className="c-hero" ref={ref}><div className="c-hero-light"/><motion.div className="c-hero-media" style={{y,opacity}}><div className="c-portrait-spot"/><img src={imageSrc(doc.hero.image.src)} alt={doc.hero.image.alt}/></motion.div><div className="c-hero-fade"/>
-    <div className="c-hero-copy"><Reveal><Label>HELLO, I&apos;M</Label><h1>{doc.profile.firstName.toUpperCase()}<span>{doc.profile.lastName.replace(".","").toUpperCase()}</span></h1></Reveal><Reveal delay={.1}><p className="c-hero-role">{doc.profile.role}</p><p className="c-hero-summary">{doc.profile.summary}</p><div className="c-hero-buttons"><button onClick={replay} className="c-button c-button-gold"><Play size={16} fill="currentColor"/> PLAY INTRO</button><a className="c-button c-button-line" href="#projects">VIEW PROJECTS <ArrowUpRight size={16}/></a></div></Reveal><Reveal delay={.2}><div className="c-hero-meta"><span>{doc.profile.location}</span><i/> <span>{doc.hero.currentFocus}</span></div><div className="c-hero-status"><span className="c-status-dot"/>{doc.profile.status}</div></Reveal></div><a className="c-scroll-hint" href="#about">SCROLL TO EXPLORE <ArrowDown size={18}/></a>
+  const y=useTransform(scrollYProgress,[0,1],[0,95]);
+  const opacity=useTransform(scrollYProgress,[0,.93],[1,0]);
+  return <section id="home" className="c-hero c-hero-refined" ref={ref}>
+    <div className="c-hero-light"/>
+    <motion.div className="c-hero-media" style={{y,opacity}}><div className="c-portrait-spot"/><img src={imageSrc(heroPortrait(doc))} alt={doc.profile.name}/></motion.div>
+    <div className="c-hero-fade"/>
+    <div className="c-hero-copy">
+      <Reveal><Label>HELLO, I&apos;M</Label><h1>{doc.profile.firstName.toUpperCase()}<span>{doc.profile.lastName.replace(".","").toUpperCase()}.</span></h1></Reveal>
+      <Reveal delay={.1}><p className="c-hero-role">{doc.profile.role}</p><p className="c-hero-summary">{doc.profile.summary}</p><div className="c-hero-buttons"><a className="c-button c-button-gold" href="#projects">VIEW PROJECTS <ArrowUpRight size={16}/></a><a className="c-button c-button-line" href="#contact">CONTACT ME <ArrowUpRight size={16}/></a></div></Reveal>
+      <Reveal delay={.2}><div className="c-hero-meta"><span>{doc.profile.location}</span><i/><span>{doc.hero.currentFocus}</span></div><div className="c-hero-status"><span className="c-status-dot"/>{doc.profile.status}</div></Reveal>
+    </div>
+    <button className="c-hero-replay" onClick={replay}>REPLAY INTRO <ArrowUpRight size={14}/></button>
+    <a className="c-scroll-hint" href="#about">SCROLL TO EXPLORE <ArrowDown size={18}/></a>
   </section>;
 }
+
 function About({doc}:{doc:PortfolioDocument}) {
   return <section className="c-section c-about" id="about"><Heading number="01" name="ABOUT ME" subtitle={doc.about.section.heading}/><div className="c-about-grid"><Reveal className="c-about-picture"><img src={imageSrc(doc.about.image.src)} alt={doc.about.image.alt}/><span>{doc.about.imageNote}</span></Reveal><Reveal className="c-about-info">{doc.about.paragraphs.map((p,i)=><p key={i}>{p}</p>)}<div className="c-about-facts">{doc.about.facts.map((f,i)=><div key={i}><span>{f.label}</span><strong>{f.value}</strong></div>)}</div><a className="c-text-link" href="#projects">DISCOVER MY PROJECTS <ArrowUpRight size={16}/></a></Reveal></div></section>;
 }
