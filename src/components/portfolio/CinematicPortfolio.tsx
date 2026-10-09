@@ -19,6 +19,11 @@ const views: { id: Mode; title: string; caption: string; description: string; or
   { id:"developer", title:"Developer", caption:"ENGINEERING FIRST", description:"Source code, technologies, and technical work.", order:["projects","skills","about","education","leadership","certifications","achievements"] }
 ];
 
+function heroPortrait(doc: PortfolioDocument) {
+  return doc.hero.image.src === "/images/profile/jatin-working.jpg"
+    ? doc.about.image.src
+    : doc.hero.image.src;
+}
 function imageSrc(src: string) {
   // The large Khao-Piio homepage shot was unavailable from the repository connector.
   // Show an authentic in-repo checkout screenshot until that asset can be added.
@@ -40,31 +45,36 @@ function External({href,children,primary=false}:{href:string;children:React.Reac
 }
 function Intro({document,onDone}:{document:PortfolioDocument;onDone:()=>void}) {
   const [phase,setPhase]=useState(0);
-  const reduce=useReducedMotion();
-  const activePhase = reduce ? 4 : phase;
+  const reduced=useReducedMotion();
+  const activePhase=reduced?4:phase;
   useEffect(()=>{
-    if(reduce)return;
-    const timers=[420,1440,2600,3950].map((v,i)=>window.setTimeout(()=>setPhase(i+1),v));
-    return ()=>timers.forEach(clearTimeout);
-  },[reduce]);
-  useEffect(()=>{const f=(e:KeyboardEvent)=>{if(e.key==="Escape"||e.key==="Enter")onDone();};window.addEventListener("keydown",f);return()=>window.removeEventListener("keydown",f);},[onDone]);
-  return <motion.div className="c-intro" role="dialog" aria-modal="true" aria-label="Cinematic introduction" exit={{opacity:0,filter:"blur(10px)"}} transition={{duration:.65}}>
-    <div className="c-intro-light"/>
-    <motion.div className="c-intro-photo" initial={{opacity:0,scale:1.17,filter:"grayscale(1) blur(18px)"}} animate={activePhase>=2?{opacity:.75,scale:1,filter:"grayscale(.75) blur(0px)"}:{}} transition={{duration:1.4,ease:easing}}><img src={imageSrc(document.hero.image.src)} alt="" /></motion.div>
-    <AnimatePresence>{activePhase===1&&<motion.p key="studio" className="c-studio-text" initial={{opacity:0,letterSpacing:".8em"}} animate={{opacity:1,letterSpacing:".27em"}} exit={{opacity:0}} transition={{duration:.85}}>WELCOME TO MY PORTFOLIO</motion.p>}</AnimatePresence>
-    <motion.div className="c-intro-type" initial={{opacity:0,y:24,filter:"blur(18px)"}} animate={activePhase>=2?{opacity:1,y:0,filter:"blur(0px)"}:{}} transition={{duration:1.1,ease:easing}}><h1>{document.profile.firstName.toUpperCase()}</h1><p>{document.profile.lastName.replace(".","").toUpperCase()}</p></motion.div>
-    <motion.div className="c-intro-actions" initial={{opacity:0,y:20}} animate={activePhase>=3?{opacity:1,y:0}:{}} transition={{duration:.7}}><span>{document.hero.currentFocus}</span><button onClick={onDone} className="c-button c-button-gold"><Play size={16} fill="currentColor"/> ENTER PORTFOLIO</button></motion.div>
-    <button className="c-intro-skip" onClick={onDone}><SkipForward size={15}/> SKIP INTRO</button>
+    if(reduced)return;
+    const timers=[380,1050,1800,2700].map((delay,index)=>window.setTimeout(()=>setPhase(index+1),delay));
+    timers.push(window.setTimeout(onDone,4500));
+    return ()=>timers.forEach(window.clearTimeout);
+  },[reduced,onDone]);
+  useEffect(()=>{
+    const listener=(event:KeyboardEvent)=>{if(event.key==="Escape"||event.key==="Enter")onDone();};
+    window.addEventListener("keydown",listener);
+    return()=>window.removeEventListener("keydown",listener);
+  },[onDone]);
+  return <motion.div className="c-intro c-intro-refined" role="dialog" aria-modal="true" aria-label="Portfolio introduction" exit={{opacity:0,filter:"blur(9px)"}} transition={{duration:.7,ease:easing}}>
+    <div className="c-intro-light" aria-hidden="true"/>
+    <div className="c-intro-top"><span>JATIN PANDEY</span><span>PORTFOLIO</span></div>
+    <motion.div className="c-intro-photo" aria-hidden="true" initial={{opacity:0,scale:1.09,filter:"grayscale(1) brightness(.35) blur(15px)"}} animate={activePhase>=2?{opacity:1,scale:1,filter:"grayscale(.57) brightness(.68) blur(0px)"}:{}} transition={{duration:1.5,ease:easing}}>
+      <img src={imageSrc(heroPortrait(document))} alt=""/>
+    </motion.div>
+    <div className="c-intro-copy">
+      <motion.p className="c-intro-kicker" initial={{opacity:0,y:13}} animate={activePhase>=1?{opacity:1,y:0}:{}} transition={{duration:.65}}>DEVELOPER PORTFOLIO</motion.p>
+      <motion.h1 initial={{opacity:0,y:36,filter:"blur(15px)"}} animate={activePhase>=2?{opacity:1,y:0,filter:"blur(0px)"}:{}} transition={{duration:1,ease:easing}}>{document.profile.firstName}<span>{document.profile.lastName.replace(".","")}<i>.</i></span></motion.h1>
+      <motion.p className="c-intro-role" initial={{opacity:0,y:18}} animate={activePhase>=3?{opacity:1,y:0}:{}} transition={{duration:.7}}>{document.hero.currentFocus}</motion.p>
+      <motion.div initial={{opacity:0,y:12}} animate={activePhase>=4?{opacity:1,y:0}:{}} transition={{duration:.6}}><button className="c-intro-enter" onClick={onDone}>VIEW PORTFOLIO <ArrowUpRight size={17}/></button></motion.div>
+    </div>
+    <span className="c-intro-duration" aria-hidden="true">INTRODUCTION <span>•</span> 00:04</span>
+    <button className="c-intro-skip" onClick={onDone}><SkipForward size={14}/> SKIP</button>
   </motion.div>;
 }
-function ProfileSelect({onSelect}:{onSelect:(m:Mode)=>void}) {
-  const icons=[Clapperboard,BriefcaseBusiness,Code2];
-  return <motion.div className="c-selector" role="dialog" aria-modal="true" aria-label="Choose viewing perspective" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0,scale:1.04}} transition={{duration:.55}}>
-    <Label>WELCOME / CHOOSE YOUR PERSPECTIVE</Label><h2>Who&apos;s exploring?</h2><p>One portfolio. Three ways to navigate the work.</p>
-    <div className="c-profiles">{views.map((v,i)=>{const Icon=icons[i];return <motion.button type="button" key={v.id} className="c-profile-option" onClick={()=>onSelect(v.id)} initial={{opacity:0,y:30}} animate={{opacity:1,y:0}} transition={{delay:.12*i,duration:.6}}><span className={"c-profile-card c-profile-"+v.id}><span className="c-profile-number">0{i+1}</span><Icon strokeWidth={1} size={52}/><span className="c-profile-caption">{v.caption}</span></span><strong>{v.title}</strong><small>{v.description}</small></motion.button>;})}</div>
-    <button className="c-selector-default" onClick={()=>onSelect("explore")}>CONTINUE TO PORTFOLIO <ArrowRight size={15}/></button>
-  </motion.div>;
-}
+
 function Navigation({mode,setMode,replay}:{mode:Mode;setMode:(m:Mode)=>void;replay:()=>void}) {
   const [open,setOpen]=useState(false);const [scrolled,setScrolled]=useState(false);
   useEffect(()=>{const listener=()=>setScrolled(window.scrollY>60);listener();window.addEventListener("scroll",listener,{passive:true});return()=>window.removeEventListener("scroll",listener);},[]);
