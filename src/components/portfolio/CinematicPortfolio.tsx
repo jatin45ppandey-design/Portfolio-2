@@ -41,18 +41,19 @@ function External({href,children,primary=false}:{href:string;children:React.Reac
 function Intro({document,onDone}:{document:PortfolioDocument;onDone:()=>void}) {
   const [phase,setPhase]=useState(0);
   const reduce=useReducedMotion();
+  const activePhase = reduce ? 4 : phase;
   useEffect(()=>{
-    if(reduce){setPhase(4);return;}
+    if(reduce)return;
     const timers=[420,1440,2600,3950].map((v,i)=>window.setTimeout(()=>setPhase(i+1),v));
     return ()=>timers.forEach(clearTimeout);
   },[reduce]);
   useEffect(()=>{const f=(e:KeyboardEvent)=>{if(e.key==="Escape"||e.key==="Enter")onDone();};window.addEventListener("keydown",f);return()=>window.removeEventListener("keydown",f);},[onDone]);
   return <motion.div className="c-intro" role="dialog" aria-modal="true" aria-label="Cinematic introduction" exit={{opacity:0,filter:"blur(10px)"}} transition={{duration:.65}}>
     <div className="c-intro-light"/>
-    <motion.div className="c-intro-photo" initial={{opacity:0,scale:1.17,filter:"grayscale(1) blur(18px)"}} animate={phase>=2?{opacity:.75,scale:1,filter:"grayscale(.75) blur(0px)"}:{}} transition={{duration:1.4,ease:easing}}><img src={imageSrc(document.hero.image.src)} alt="" /></motion.div>
-    <AnimatePresence>{phase===1&&<motion.p key="studio" className="c-studio-text" initial={{opacity:0,letterSpacing:".8em"}} animate={{opacity:1,letterSpacing:".27em"}} exit={{opacity:0}} transition={{duration:.85}}>WELCOME TO MY PORTFOLIO</motion.p>}</AnimatePresence>
-    <motion.div className="c-intro-type" initial={{opacity:0,y:24,filter:"blur(18px)"}} animate={phase>=2?{opacity:1,y:0,filter:"blur(0px)"}:{}} transition={{duration:1.1,ease:easing}}><h1>{document.profile.firstName.toUpperCase()}</h1><p>{document.profile.lastName.replace(".","").toUpperCase()}</p></motion.div>
-    <motion.div className="c-intro-actions" initial={{opacity:0,y:20}} animate={phase>=3?{opacity:1,y:0}:{}} transition={{duration:.7}}><span>{document.hero.currentFocus}</span><button onClick={onDone} className="c-button c-button-gold"><Play size={16} fill="currentColor"/> ENTER PORTFOLIO</button></motion.div>
+    <motion.div className="c-intro-photo" initial={{opacity:0,scale:1.17,filter:"grayscale(1) blur(18px)"}} animate={activePhase>=2?{opacity:.75,scale:1,filter:"grayscale(.75) blur(0px)"}:{}} transition={{duration:1.4,ease:easing}}><img src={imageSrc(document.hero.image.src)} alt="" /></motion.div>
+    <AnimatePresence>{activePhase===1&&<motion.p key="studio" className="c-studio-text" initial={{opacity:0,letterSpacing:".8em"}} animate={{opacity:1,letterSpacing:".27em"}} exit={{opacity:0}} transition={{duration:.85}}>WELCOME TO MY PORTFOLIO</motion.p>}</AnimatePresence>
+    <motion.div className="c-intro-type" initial={{opacity:0,y:24,filter:"blur(18px)"}} animate={activePhase>=2?{opacity:1,y:0,filter:"blur(0px)"}:{}} transition={{duration:1.1,ease:easing}}><h1>{document.profile.firstName.toUpperCase()}</h1><p>{document.profile.lastName.replace(".","").toUpperCase()}</p></motion.div>
+    <motion.div className="c-intro-actions" initial={{opacity:0,y:20}} animate={activePhase>=3?{opacity:1,y:0}:{}} transition={{duration:.7}}><span>{document.hero.currentFocus}</span><button onClick={onDone} className="c-button c-button-gold"><Play size={16} fill="currentColor"/> ENTER PORTFOLIO</button></motion.div>
     <button className="c-intro-skip" onClick={onDone}><SkipForward size={15}/> SKIP INTRO</button>
   </motion.div>;
 }
@@ -76,7 +77,7 @@ function Hero({doc,replay}:{doc:PortfolioDocument;replay:()=>void}) {
   const y=useTransform(scrollYProgress,[0,1],[0,110]);
   const opacity=useTransform(scrollYProgress,[0,.88],[1,0]);
   return <section id="home" className="c-hero" ref={ref}><div className="c-hero-light"/><motion.div className="c-hero-media" style={{y,opacity}}><div className="c-portrait-spot"/><img src={imageSrc(doc.hero.image.src)} alt={doc.hero.image.alt}/></motion.div><div className="c-hero-fade"/>
-    <div className="c-hero-copy"><Reveal><Label>HELLO, I'M</Label><h1>{doc.profile.firstName.toUpperCase()}<span>{doc.profile.lastName.replace(".","").toUpperCase()}</span></h1></Reveal><Reveal delay={.1}><p className="c-hero-role">{doc.profile.role}</p><p className="c-hero-summary">{doc.profile.summary}</p><div className="c-hero-buttons"><button onClick={replay} className="c-button c-button-gold"><Play size={16} fill="currentColor"/> PLAY INTRO</button><a className="c-button c-button-line" href="#projects">VIEW PROJECTS <ArrowUpRight size={16}/></a></div></Reveal><Reveal delay={.2}><div className="c-hero-meta"><span>{doc.profile.location}</span><i/> <span>{doc.hero.currentFocus}</span></div><div className="c-hero-status"><span className="c-status-dot"/>{doc.profile.status}</div></Reveal></div><a className="c-scroll-hint" href="#about">SCROLL TO EXPLORE <ArrowDown size={18}/></a>
+    <div className="c-hero-copy"><Reveal><Label>HELLO, I&apos;M</Label><h1>{doc.profile.firstName.toUpperCase()}<span>{doc.profile.lastName.replace(".","").toUpperCase()}</span></h1></Reveal><Reveal delay={.1}><p className="c-hero-role">{doc.profile.role}</p><p className="c-hero-summary">{doc.profile.summary}</p><div className="c-hero-buttons"><button onClick={replay} className="c-button c-button-gold"><Play size={16} fill="currentColor"/> PLAY INTRO</button><a className="c-button c-button-line" href="#projects">VIEW PROJECTS <ArrowUpRight size={16}/></a></div></Reveal><Reveal delay={.2}><div className="c-hero-meta"><span>{doc.profile.location}</span><i/> <span>{doc.hero.currentFocus}</span></div><div className="c-hero-status"><span className="c-status-dot"/>{doc.profile.status}</div></Reveal></div><a className="c-scroll-hint" href="#about">SCROLL TO EXPLORE <ArrowDown size={18}/></a>
   </section>;
 }
 function About({doc}:{doc:PortfolioDocument}) {
@@ -116,7 +117,7 @@ function Achievements({doc,open}:{doc:PortfolioDocument;open:(a:Achievement)=>vo
   return <section id="achievements" className="c-section c-achievements"><Heading number="07" name="ACHIEVEMENTS" subtitle={doc.achievements.section.description}/><div className="c-awards">{doc.achievements.items.filter(a=>a.visible).sort((a,b)=>a.order-b.order).map((a,i)=><Reveal key={a.id} delay={i*.12}><button className="c-award" onClick={()=>open(a)}><div className="c-award-image">{a.image&&<img src={imageSrc(a.image.src)} alt="" loading="lazy"/>}</div><div className="c-award-copy"><Trophy size={22}/><span>{a.date}</span><h3>{a.position}</h3><h4>{a.title} · {a.event}</h4><p>{a.organization}</p><span className="c-award-open">VIEW CERTIFICATE <ArrowUpRight size={15}/></span></div></button></Reveal>)}</div></section>;
 }
 function Contact({doc}:{doc:PortfolioDocument}) {
-  return <footer id="contact" className="c-contact"><div className="c-contact-glow"/><Label>LET'S CONNECT</Label><h2>{doc.contact.heading}</h2><p>{doc.contact.description}</p><div className="c-contact-actions"><External href={"mailto:"+doc.contact.email} primary><Mail size={16}/> EMAIL ME</External><External href={doc.profile.links.github}><Github size={16}/> GITHUB</External><External href={doc.profile.links.linkedin}><Linkedin size={16}/> LINKEDIN</External><External href={doc.profile.links.leetcode}>LEETCODE</External></div><div className="c-footer"><span>© {new Date().getFullYear()} {doc.profile.name.toUpperCase()}</span><span>{doc.footer.role} · {doc.footer.focus}</span></div></footer>;
+  return <footer id="contact" className="c-contact"><div className="c-contact-glow"/><Label>LET&apos;S CONNECT</Label><h2>{doc.contact.heading}</h2><p>{doc.contact.description}</p><div className="c-contact-actions"><External href={"mailto:"+doc.contact.email} primary><Mail size={16}/> EMAIL ME</External><External href={doc.profile.links.github}><Github size={16}/> GITHUB</External><External href={doc.profile.links.linkedin}><Linkedin size={16}/> LINKEDIN</External><External href={doc.profile.links.leetcode}>LEETCODE</External></div><div className="c-footer"><span>© {new Date().getFullYear()} {doc.profile.name.toUpperCase()}</span><span>{doc.footer.role} · {doc.footer.focus}</span></div></footer>;
 }
 function ProjectModal({p,all,onClose,onChange}:{p:Project;all:Project[];onClose:()=>void;onChange:(p:Project)=>void}) {
   const ix=all.findIndex(a=>a.id===p.id);
@@ -133,9 +134,8 @@ export default function CinematicPortfolio({document: data}:{document:PortfolioD
   const [project,setProject]=useState<Project|null>(null);
   const [media,setMedia]=useState<Certificate|Achievement|null>(null);
   const reduce=useReducedMotion();
-  useEffect(()=>{try{const remembered=sessionStorage.getItem("jp-cinema-perspective") as Mode|null;if(views.some(v=>v.id===remembered)){setMode(remembered!);setStage("home");}else if(reduce){setStage("profiles");}}catch{}},[reduce]);
-  useEffect(()=>{if(stage==="home"&&!project&&!media)return;const prior=documentBodyOverflow();document.body.style.overflow="hidden";return()=>{document.body.style.overflow=prior;};},[stage,project,media]);
-  function documentBodyOverflow(){return document.body.style.overflow;}
+  useEffect(()=>{const timer=window.setTimeout(()=>{try{const remembered=sessionStorage.getItem("jp-cinema-perspective") as Mode|null;if(views.some(v=>v.id===remembered)){setMode(remembered!);setStage("home");}else if(reduce){setStage("profiles");}}catch{}},0);return()=>window.clearTimeout(timer);},[reduce]);
+  useEffect(()=>{if(stage==="home"&&!project&&!media)return;const prior=document.body.style.overflow;document.body.style.overflow="hidden";return()=>{document.body.style.overflow=prior;};},[stage,project,media]);
   const choose=(m:Mode)=>{setMode(m);try{sessionStorage.setItem("jp-cinema-perspective",m);}catch{}setStage("home");window.scrollTo({top:0,behavior:"auto"});};
   const replay=()=>{setStage("opening");window.scrollTo({top:0,behavior:"auto"});};
   const close=useCallback(()=>setProject(null),[]),closeMedia=useCallback(()=>setMedia(null),[]);
