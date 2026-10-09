@@ -1,0 +1,24 @@
+name: Intro Only — Quality Checks
+on:
+  push:
+    branches: [dev/intro-only]
+  pull_request:
+    paths:
+      - "src/**"
+      - "package.json"
+      - "tsconfig.json"
+      - "vite.config.ts"
+      - ".github/workflows/intro-only-ci.yml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run check
+      - run: npm run build

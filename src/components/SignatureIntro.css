@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap");
+
+:root{font-family:Manrope,Arial,sans-serif;color:#f5f1ea;background:#0a0c10;font-synthesis:none}
+*{box-sizing:border-box}
+html{background:#0a0c10}
+body{margin:0;min-width:320px}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid #d6b57a;outline-offset:6px}
+.signature-shell{min-height:100svh;background:#0a0c10;overflow:hidden}
+.signature{
+  position:relative;isolation:isolate;display:block;
+  min-height:600px;height:100svh;overflow:hidden;
+  background:#0a0c10;color:#f5f1ea
+}
+.signature-light{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 40% 66% at 76% 45%,#9e76443a 0%,#493c302a 35%,transparent 78%);
+  filter:blur(25px)
+}
+.signature-edge{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(0deg,#0a0c1030,transparent 31%),
+    linear-gradient(90deg,#0a0c10c9 0%,transparent 43%)
+}
+.signature-top{
+  position:absolute;top:7%;left:7%;right:7%;z-index:6;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  color:#beb9b8;font:500 10px/1.5 "JetBrains Mono",monospace;letter-spacing:.14em
+}
+.signature-top span:last-child{color:#d6b57a}
+.signature-photo{
+  position:absolute;left:auto;right:2%;bottom:-7%;width:57%;height:115%;
+  overflow:hidden;pointer-events:none
+}
+.signature-photo:before{
+  content:"";position:absolute;inset:0;z-index:2;
+  background:linear-gradient(90deg,#0a0c10 0%,#0a0c1080 13%,transparent 49%),
+    linear-gradient(0deg,#0a0c10 0%,transparent 30%);
+  pointer-events:none
+}
+.signature-photo img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:center 32%;
+  mask-image:radial-gradient(ellipse 71% 69% at 56% 47%,#000 33%,#000d 51%,transparent 90%);
+  -webkit-mask-image:radial-gradient(ellipse 71% 69% at 56% 47%,#000 33%,#000d 51%,transparent 90%)
+}
+.signature-copy{
+  position:absolute;top:50%;left:7%;z-index:5;
+  transform:translateY(-43%);display:flex;flex-direction:column;
+  align-items:flex-start;width:57%;max-width:800px
+}
+.signature-kicker{
+  color:#d6b57a;font:500 10px/1.6 "JetBrains Mono",monospace;
+  letter-spacing:.22em;margin:0 0 22px
+}
+.signature-copy h1{
+  font:400 clamp(94px,11.2vw,174px)/.81 "Bebas Neue",Impact,sans-serif;
+  letter-spacing:.015em;text-transform:uppercase;color:#f5f1ea;
+  margin:0 0 28px;text-shadow:0 12px 75px #000b
+}
+.signature-copy h1 span{display:block;font-size:.72em;line-height:1.16;letter-spacing:.025em}
+.signature-copy h1 i{color:#d6b57a;font-style:normal}
+.signature-role{
+  color:#c7c4c5;font:500 clamp(11px,1.1vw,14px)/1.85 "JetBrains Mono",monospace;
+  letter-spacing:.035em;margin:0 0 31px
+}
+.signature-action{
+  display:inline-flex;align-items:center;gap:13px;
+  border:0;border-bottom:1px solid #d6b57a;background:transparent;color:#f5f1ea;
+  padding:9px 0 12px;font:600 11px "JetBrains Mono",monospace;letter-spacing:.11em;
+  transition:color .25s,gap .25s
+}
+.signature-action:hover{color:#d6b57a;gap:22px}
+.signature-skip{
+  position:absolute;right:7%;bottom:7%;z-index:7;
+  display:flex;align-items:center;gap:11px;border:0;background:transparent;
+  color:#bdb9b5;padding:9px 0;
+  font:600 10px/1.4 "JetBrains Mono",monospace;letter-spacing:.08em;
+  transition:color .2s
+}
+.signature-skip:hover{color:#d6b57a}
+@media(max-width:900px){
+  .signature-copy{left:6%;top:55%;width:65%}
+  .signature-copy h1{font-size:clamp(90px,17vw,160px)}
+  .signature-photo{width:71%;right:-8%}
+  .signature-top{left:6%;right:6%}
+  .signature-skip{right:6%}
+}
+@media(max-width:600px){
+  .signature{min-height:600px}
+  .signature-copy{left:7%;right:7%;top:auto;bottom:18%;transform:none;width:auto}
+  .signature-copy h1{font-size:clamp(93px,24vw,150px);margin:0 0 16px}
+  .signature-copy h1 span{font-size:.64em}
+  .signature-photo{width:105%;right:-10%;height:78%;top:0;bottom:auto}
+  .signature-photo:before{background:linear-gradient(0deg,#0a0c10 0%,#0a0c10bf 22%,transparent 69%)}
+  .signature-photo img{
+    object-position:center 35%;
+    mask-image:radial-gradient(ellipse 60% 69% at 57% 35%,#000 34%,#000b 57%,transparent 94%);
+    -webkit-mask-image:radial-gradient(ellipse 60% 69% at 57% 35%,#000 34%,#000b 57%,transparent 94%)
+  }
+  .signature-kicker{font-size:9px;margin-bottom:14px}
+  .signature-role{font-size:10px;line-height:1.6;margin-bottom:16px}
+  .signature-action{font-size:10px}
+  .signature-top{top:6%;font-size:9px}
+  .signature-skip{bottom:4%;font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}
+}

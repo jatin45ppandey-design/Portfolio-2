@@ -1,48 +1,25 @@
 {
-  "name": "my-portfolio",
-  "version": "0.1.0",
+  "name": "jatin-signature-intro",
   "private": true,
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.9.1",
-    "@prisma/adapter-neon": "^7.10.0",
-    "@prisma/client": "^7.10.0",
-    "@react-three/drei": "^10.7.9",
-    "@react-three/fiber": "^9.8.1",
-    "cloudinary": "^2.11.0",
-    "clsx": "^2.1.1",
-    "lucide-react": "^1.48.0",
-    "motion": "^13.4.6",
-    "next": "16.3.7",
-    "next-auth": "^5.0.0-beta.32",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "react-hook-form": "^7.89.0",
-    "tailwind-merge": "^3.7.0",
-    "three": "^0.186.1",
-    "zod": "^4.6.5"
+    "framer-motion": "^11.18.2",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "dotenv": "^18.0.4",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.7",
-    "prisma": "^7.10.0",
-    "tailwindcss": "^4",
-    "tsx": "^4.23.15",
-    "typescript": "^5"
-  },
-  "allowScripts": {
-    "@prisma/engines@7.10.0": true,
-    "esbuild@0.28.2": true,
-    "prisma@7.10.0": true
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.6",
+    "@vitejs/plugin-react": "^4.4.1",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
   }
 }
