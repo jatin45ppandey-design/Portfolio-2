@@ -63,7 +63,6 @@ function Intro({document,onDone}:{document:PortfolioDocument;onDone:()=>void}) {
       <motion.p className="c-intro-role" initial={{opacity:0,y:18}} animate={activePhase>=3?{opacity:1,y:0}:{}} transition={{duration:.7}}>{document.hero.currentFocus}</motion.p>
       <motion.div initial={{opacity:0,y:12}} animate={activePhase>=4?{opacity:1,y:0}:{}} transition={{duration:.6}}><button className="c-intro-enter" onClick={onDone}>VIEW PORTFOLIO <ArrowUpRight size={17}/></button></motion.div>
     </div>
-    <span className="c-intro-duration" aria-hidden="true">INTRODUCTION <span>•</span> 00:04</span>
     <button className="c-intro-skip" onClick={onDone}><SkipForward size={14}/> SKIP</button>
   </motion.div>;
 }
