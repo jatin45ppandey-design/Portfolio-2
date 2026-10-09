@@ -1,40 +1,51 @@
-# Jatin Pandey | Cinematic Portfolio (V2)
+# Jatin Pandey — Developer Portfolio
 
-This repository is the **independent, cinematic edition** of the developer portfolio for Jatin Pandey.
+A professional, cinematic developer portfolio for **Jatin Pandey** built on the existing **My-Portfolio** technical foundation. Uses real portfolio content, subtle editorial animations and a low-key Obsidian × Champagne Gold aesthetic.
 
-The visible public site has premium cinematic opening, studio spotlight portrait, three viewing perspectives, scroll-driven project gallery, project case studies, skill/education/leadership/certification/achievement sections. **Headings are professional** and the factual content comes from the existing `My-Portfolio` schema.
+## The experience (V3)
+- **One view**: automatic, skippable **Signature Reveal** intro directly transitions to the homepage. No Recruiter/Developer profile gate or navbar View selector.
+- Familiar, professional sections in **the same order as My-Portfolio**: Home, About Me, Projects, Skills, Education, Leadership, Certifications, Achievements, Contact.
+- Real portfolio screenshots first; interactive project panels include actual descriptions, tech stack, screenshots and available links.
+- Restrained portrait spotlight, section reveals, a slim scroll indicator, gentle project hover and desktop pinned horizontal project navigation (native swipe on mobile).
+- All original editable content remains governed by the existing **PortfolioDocument** model.
 
-## Stack and Portfolio Studio
-This version is built on the same technical specification as My-Portfolio: **Next.js 16, React 19, TypeScript, Tailwind 4, Motion, Prisma 7, Neon PostgreSQL, Auth.js/GitHub owner authentication, Cloudinary**.
+## Stack and Studio
+**Next.js 16 · React 19 · TypeScript · Tailwind 4 · Motion · Prisma 7 · Neon PostgreSQL · Auth.js/GitHub OAuth · Cloudinary.**
 
-The existing owner-only Studio source is preserved (content editing, draft preview, publish, revision history, asset management, optimistic-conflict controls). The published site and preview call the same `PortfolioView` component. Preview mode uses draft content; live mode uses published content.
+Studio code migrated from My-Portfolio and preserved for owner-only editing, draft preview, publishing, revision history, conflict validation and media management. Both Studio preview and public site use \`src/components/portfolio/PortfolioView.tsx\` (and the same document schema). The *old My-Portfolio repository and deployed website remain untouched*.
 
-**No connections to the old website's production database should be reused.** Configure separate Neon, Cloudinary storage folder, GitHub OAuth callback / site URL, and secrets for the new deployment.
+## Run locally
+Use Node.js 22+ and an independent environment for the new site.
 
-## Quick start
-```bash
+\`\`\`bash
+git clone -b dev/professional-refinement https://github.com/jatin45ppandey-design/Portfolio-2.git
+cd Portfolio-2
 npm ci
-# Create .env.local from .env.example, fill in YOUR OWN NEW deployment values
 npx prisma generate
 npm run dev
-```
+\`\`\`
 
-## Checks
-```bash
+Open \`http://localhost:3000\`. To rerun the intro, use the discreet **Replay Intro** action; subsequent visits in the same browser session go directly to the homepage.
+
+## Check code
+\`\`\`bash
 npm run lint
 npx tsc --noEmit --incremental false
 npm run build
-```
+\`\`\`
 
-Run migrations in the new database only. Follow the migration and initialization instructions in the original My-Portfolio README, with a new private environment; **never** point Prisma migrations to the old production database.
+## Deploy and connect Studio
+Use \`.env.example\` to supply the **new site's** environment in \`.env.local\` / Vercel.
+- \`DATABASE_URL\` + \`DIRECT_URL\`: **a separate Neon database**, never the old production DB.
+- \`AUTH_SECRET\`, \`AUTH_GITHUB_ID\`, \`AUTH_GITHUB_SECRET\`, \`GITHUB_OWNER_ID\`: owner-only Studio authorization; register the correct OAuth callback for the new site.
+- \`CLOUDINARY_*\`: configure the new deployment's media.
+- \`NEXT_PUBLIC_SITE_URL\`: deployment origin.
 
-## Known media follow-up
-- The original private repo's 1.5 MB portrait could not be copied via the current GitHub connector. The new repository uses Jatin's existing public GitHub profile photograph as an authentic fallback.
-- The 1.3 MB Khao-Piio home image also exceeded the connector response size; the interface temporarily displays the project's real checkout image. Replace the local `public/images/projects/khao-piio/home.jpg` with the original asset when available.
-- Studio-managed Cloudinary images require independent media migration if the published database references them.
+Review database seed and migrations before writing to any database. Do not deploy the Studio in a publicly writable state.
 
-## Editing with Codex
-See `DESIGN.md`. Keep `src/lib/content/schema.ts` and server-side Studio authorization unchanged unless explicitly necessary. Work on the `dev/cinematic-v2` branch and run quality checks before merging to main.
+## Outstanding assets and checks
+The original >1 MB \`My-Portfolio\` private portrait and Khao-Piio home screenshot could not be fetched through the current connector. An authentic public profile portrait is used, and the real Khao-Piio checkout image is displayed instead of inventing mockups. Swap in the actual optimized assets when available.
 
-## Source safety
-`My-Portfolio` and the old deployed portfolio were **not edited** by this migration. Only the designated new repo was written.
+Production data, Studio OAuth/media publishing, actual browser rendering and mobile ergonomics should be checked with your own deployment credentials. Treat passing CI as a baseline, not a substitute for Studio end-to-end tests.
+
+Design intent and Codex constraints are recorded in \`DESIGN.md\`.
